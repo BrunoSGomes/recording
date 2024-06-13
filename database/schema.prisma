@@ -1,5 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -8,13 +8,83 @@ datasource db {
 }
 
 model Video {
-  id        String   @id
-  title     String
-  description String
-  url       String
+  id        String    @id(map: "PK_2a23c3da7a2fc570b1696191b87") @db.Uuid
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime  @default(now()) @db.Timestamp(6)
+  deletedAt DateTime? @db.Timestamp(6)
+  url       String    @db.VarChar
   sizeInKb  Int
   duration  Int
-  thumbnailUrl String?
-  createdAt DateTime
-  updatedAt DateTime
+  movieId   String?   @unique(map: "REL_46efd1060cb7a7c545b06120d1") @db.Uuid
+  episodeId String?   @unique(map: "UQ_ce049b6bf5d3e5aee0f3dbd8dc0") @db.Uuid
+  Movie     Movie?    @relation(fields: [movieId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_46efd1060cb7a7c545b06120d14")
+  episode   episode?  @relation(fields: [episodeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_ce049b6bf5d3e5aee0f3dbd8dc0")
+}
+
+model Content {
+  id          String            @id(map: "PK_7cb78a77f6c66cb6ea6f4316a5c") @db.Uuid
+  createdAt   DateTime          @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime          @default(now()) @db.Timestamp(6)
+  deletedAt   DateTime?         @db.Timestamp(6)
+  type        Content_type_enum
+  title       String            @db.VarChar
+  description String            @db.VarChar
+  Movie       Movie?
+  TvShow      TvShow?
+}
+
+model Movie {
+  id          String     @id(map: "PK_56d58b76292b87125c5ec8bdde0") @db.Uuid
+  createdAt   DateTime   @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime   @default(now()) @db.Timestamp(6)
+  deletedAt   DateTime?  @db.Timestamp(6)
+  contentId   String?    @unique(map: "REL_c155b5944bdd1e260a4ae79bc8") @db.Uuid
+  thumbnailId String?    @unique(map: "UQ_a20dc7d8915f1caf6079301b10e") @db.Uuid
+  Thumbnail   Thumbnail? @relation(fields: [thumbnailId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_a20dc7d8915f1caf6079301b10e")
+  Content     Content?   @relation(fields: [contentId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_c155b5944bdd1e260a4ae79bc82")
+  Video       Video?
+}
+
+model Thumbnail {
+  id        String    @id(map: "PK_29cfea45a44edc72c599d42037f") @db.Uuid
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime  @default(now()) @db.Timestamp(6)
+  deletedAt DateTime? @db.Timestamp(6)
+  url       String    @db.VarChar
+  Movie     Movie?
+  TvShow    TvShow?
+  episode   episode?
+}
+
+model TvShow {
+  id          String     @id(map: "PK_0ecc486b5a7a0f90f5857634ed9") @db.Uuid
+  createdAt   DateTime   @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime   @default(now()) @db.Timestamp(6)
+  deletedAt   DateTime?  @db.Timestamp(6)
+  contentId   String?    @unique(map: "UQ_b6ac53aff4b7200e4b01ca43a9c") @db.Uuid
+  thumbnailId String?    @unique(map: "UQ_e4e17f7e4fbf10e4bcd61aa8e59") @db.Uuid
+  Content     Content?   @relation(fields: [contentId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_b6ac53aff4b7200e4b01ca43a9c")
+  Thumbnail   Thumbnail? @relation(fields: [thumbnailId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_e4e17f7e4fbf10e4bcd61aa8e59")
+  episode     episode[]
+}
+
+model episode {
+  id          String     @id(map: "PK_7258b95d6d2bf7f621845a0e143") @db.Uuid
+  createdAt   DateTime   @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime   @default(now()) @db.Timestamp(6)
+  deletedAt   DateTime?  @db.Timestamp(6)
+  title       String     @db.VarChar
+  description String     @db.VarChar
+  season      Int
+  number      Int
+  tvShowId    String?    @db.Uuid
+  thumbnailId String?    @unique(map: "UQ_6c57a6d8be1b8001ee31093ee99") @db.Uuid
+  Video       Video?
+  Thumbnail   Thumbnail? @relation(fields: [thumbnailId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_6c57a6d8be1b8001ee31093ee99")
+  TvShow      TvShow?    @relation(fields: [tvShowId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_bc417590af57a49dc42ce4ba038")
+}
+
+enum Content_type_enum {
+  MOVIE
+  TV_SHOW
 }
