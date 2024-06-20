@@ -152,4 +152,12 @@ export class ContentRepository {
 
     throw new Error(errorMessage)
   }
+
+  async clear(): Promise<{ count: number }> {
+    try {
+      return await this.model.deleteMany()
+    } catch (error) {
+      this.handleAndThrowError(error)
+    }
+  }
 }

@@ -17,8 +17,8 @@ model Video {
   duration  Int
   movieId   String?   @unique(map: "REL_46efd1060cb7a7c545b06120d1") @db.Uuid
   episodeId String?   @unique(map: "UQ_ce049b6bf5d3e5aee0f3dbd8dc0") @db.Uuid
-  Movie     Movie?    @relation(fields: [movieId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_46efd1060cb7a7c545b06120d14")
-  episode   episode?  @relation(fields: [episodeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_ce049b6bf5d3e5aee0f3dbd8dc0")
+  Movie     Movie?    @relation(fields: [movieId], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "FK_46efd1060cb7a7c545b06120d14")
+  episode   episode?  @relation(fields: [episodeId], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "FK_ce049b6bf5d3e5aee0f3dbd8dc0")
 }
 
 model Content {
@@ -40,8 +40,8 @@ model Movie {
   deletedAt   DateTime?  @db.Timestamp(6)
   contentId   String?    @unique(map: "REL_c155b5944bdd1e260a4ae79bc8") @db.Uuid
   thumbnailId String?    @unique(map: "UQ_a20dc7d8915f1caf6079301b10e") @db.Uuid
-  Thumbnail   Thumbnail? @relation(fields: [thumbnailId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_a20dc7d8915f1caf6079301b10e")
-  Content     Content?   @relation(fields: [contentId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_c155b5944bdd1e260a4ae79bc82")
+  Thumbnail   Thumbnail? @relation(fields: [thumbnailId], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "FK_a20dc7d8915f1caf6079301b10e")
+  Content     Content?   @relation(fields: [contentId], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "FK_c155b5944bdd1e260a4ae79bc82")
   Video       Video?
 }
 
@@ -63,8 +63,8 @@ model TvShow {
   deletedAt   DateTime?  @db.Timestamp(6)
   contentId   String?    @unique(map: "UQ_b6ac53aff4b7200e4b01ca43a9c") @db.Uuid
   thumbnailId String?    @unique(map: "UQ_e4e17f7e4fbf10e4bcd61aa8e59") @db.Uuid
-  Content     Content?   @relation(fields: [contentId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_b6ac53aff4b7200e4b01ca43a9c")
-  Thumbnail   Thumbnail? @relation(fields: [thumbnailId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_e4e17f7e4fbf10e4bcd61aa8e59")
+  Content     Content?   @relation(fields: [contentId], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "FK_b6ac53aff4b7200e4b01ca43a9c")
+  Thumbnail   Thumbnail? @relation(fields: [thumbnailId], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "FK_e4e17f7e4fbf10e4bcd61aa8e59")
   episode     episode[]
 }
 
@@ -80,8 +80,8 @@ model episode {
   tvShowId    String?    @db.Uuid
   thumbnailId String?    @unique(map: "UQ_6c57a6d8be1b8001ee31093ee99") @db.Uuid
   Video       Video?
-  Thumbnail   Thumbnail? @relation(fields: [thumbnailId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_6c57a6d8be1b8001ee31093ee99")
-  TvShow      TvShow?    @relation(fields: [tvShowId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_bc417590af57a49dc42ce4ba038")
+  Thumbnail   Thumbnail? @relation(fields: [thumbnailId], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "FK_6c57a6d8be1b8001ee31093ee99")
+  TvShow      TvShow?    @relation(fields: [tvShowId], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "FK_bc417590af57a49dc42ce4ba038")
 }
 
 enum Content_type_enum {
