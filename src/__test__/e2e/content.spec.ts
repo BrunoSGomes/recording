@@ -87,30 +87,5 @@ describe('ContentController (e2e)', () => {
           })
         })
     })
-
-    // it('does not allow non mp4 files', async () => {
-    //   const video = {
-    //     title: 'Test Video',
-    //     description: 'This is a test video',
-    //     videoUrl: 'uploads/test.mp4',
-    //     thumbnailUrl: 'uploads/test.jpg',
-    //     sizeInKb: 100,
-    //     duration: 100
-    //   }
-
-    //   await request(app.getHttpServer())
-    //     .post('/content/video')
-    //     .attach('video', './test/fixtures/sample.mp3')
-    //     .attach('thumbnail', './test/fixtures/sample.jpg')
-    //     .field('title', video.title)
-    //     .field('description', video.description)
-    //     .expect(HttpStatus.BAD_REQUEST)
-    //     .expect({
-    //       message:
-    //         'Invalid file type, only video/mp4, image/png and image/jpeg are supported.',
-    //       error: 'Bad Request',
-    //       statusCode: 400
-    //     })
-    // })
   })
 })
