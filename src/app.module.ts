@@ -1,18 +1,16 @@
 import { Module } from '@nestjs/common'
-import { PrismaService } from '@src/persistence/prisma/prisma.service'
-import { ContentController } from './http/rest/controller/content.controller'
-import { ContentManagementService } from './core/service/content-management.service'
-import { MediaPlayerService } from './core/service/media-player.service'
-import { ContentRepository } from './persistence/repository/content.repository'
-import { VideoRepository } from './persistence/repository/video.repository'
-import { MediaPlayerController } from './http/rest/controller/media-player.controller'
-import { ConfigModule } from './infra/module/config/config.module'
+import { ContentManagementService } from '@src/core/service/content-management.service'
+import { MediaPlayerService } from '@src/core/service/media-player.service'
+import { ContentRepository } from '@src/persistence/repository/content.repository'
+import { VideoRepository } from '@src/persistence/repository/video.repository'
+import { MediaPlayerController } from '@src/http/rest/controller/media-player.controller'
+import { PersistenceModule } from '@src/persistence/persistence.module'
+import { VideoUploadController } from '@src/http/rest/controller/video-upload.controller'
 
 @Module({
-  imports: [ConfigModule.forRoot()],
-  controllers: [ContentController, MediaPlayerController],
+  imports: [PersistenceModule.forRoot()],
+  controllers: [VideoUploadController, MediaPlayerController],
   providers: [
-    PrismaService,
     ContentManagementService,
     MediaPlayerService,
     ContentRepository,
