@@ -13,6 +13,10 @@ export const factory = (): Config => {
       port: process.env.DATABASE_PORT,
       url: process.env.DATABASE_URL,
       username: process.env.DATABASE_USERNAME
+    },
+    movieDb: {
+      apiToken: process.env.MOVIEDB_API_TOKEN,
+      url: process.env.MOVIEDB_BASE_URL
     }
   })
 
