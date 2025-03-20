@@ -22,6 +22,10 @@
     "noUnusedParameters": true,
     "outDir": "./dist",
     "paths": {
+      "@contentModule/*": ["./src/module/content/*"],
+      "@identityModule/*": ["./src/module/identity/*"],
+      "@sharedModules/*": ["./src/module/shared/module/*"],
+      "@sharedLibs/*": ["./src/module/shared/*"],
       "@src/*": ["./src/*"],
       "@resource/*": ["./resource/*"]
     },

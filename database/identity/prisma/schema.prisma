@@ -1,0 +1,126 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["identity", "test"]
+}
+
+// enum ContentType {
+//   MOVIE
+//   SHOW
+
+//   @@schema("content")
+// }
+
+// model Content {
+//   id          String      @id
+//   type        ContentType
+//   title       String
+//   description String
+//   Thumbnail   Thumbnail?
+//   Movie       Movie?
+//   TvShow      TvShow?
+//   createdAt   DateTime
+//   updatedAt   DateTime
+//   deletedAt   DateTime?
+
+//   @@schema("content")
+// }
+
+// model TvShow {
+//   id        String    @id
+//   Episodes  Episode[]
+//   Content   Content   @relation(fields: [contentId], references: [id], onDelete: Cascade)
+//   contentId String    @unique
+//   createdAt DateTime
+//   updatedAt DateTime
+//   deletedAt   DateTime?
+
+//   @@schema("content")
+// }
+
+// model Episode {
+//   id          String     @id
+//   title       String
+//   description String
+//   season      Int
+//   number      Int
+//   TvShow      TvShow     @relation(fields: [tvShowId], references: [id], onDelete: Cascade)
+//   tvShowId    String
+//   Thumbnail   Thumbnail?
+//   Video       Video?
+//   createdAt   DateTime
+//   updatedAt   DateTime
+//   deletedAt   DateTime?
+
+//   @@schema("content")
+// }
+
+// model Movie {
+//   id        String   @id
+//   Video     Video?
+//   Content   Content  @relation(fields: [contentId], references: [id], onDelete: Cascade)
+//   contentId String   @unique
+//   createdAt DateTime
+//   updatedAt DateTime
+//   deletedAt   DateTime?
+
+//   @@schema("content")
+// }
+
+// model Video {
+//   id        String   @id
+//   url       String
+//   sizeInKb  Int
+//   duration  Int
+//   createdAt DateTime
+//   updatedAt DateTime
+//   deletedAt   DateTime?
+//   Movie     Movie?   @relation(fields: [movieId], references: [id], onDelete: Cascade)
+//   movieId   String?  @unique
+//   Episode   Episode? @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+//   episodeId String?  @unique
+
+//   @@schema("content")
+// }
+
+// model Thumbnail {
+//   id        String   @id
+//   url       String
+//   createdAt DateTime
+//   updatedAt DateTime
+//     deletedAt   DateTime?
+//   Episode   Episode? @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+//   episodeId String?  @unique
+//   Content   Content? @relation(fields: [contentId], references: [id], onDelete: Cascade)
+//   contentId String?  @unique
+
+//   @@schema("content")
+// }
+
+model User {
+  id        String   @id
+  firstName String
+  lastName  String
+  email     String   @unique
+  password  String
+  createdAt DateTime
+  updatedAt DateTime
+  deletedAt   DateTime?
+
+  @@schema("identity")
+}
+
+model Test {
+  id        String   @id
+  someField String
+  createdAt DateTime
+  updatedAt DateTime
+    deletedAt   DateTime?
+
+  @@schema("test")
+}
