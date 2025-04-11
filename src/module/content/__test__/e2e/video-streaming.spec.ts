@@ -1,13 +1,14 @@
 import { HttpStatus, INestApplication } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing'
 import { AppModule } from '@src/app.module'
+import { ContentManagementService } from '@contentModule/core/service/content-management.service'
+
 import fs from 'fs'
 import request from 'supertest'
-import nock from 'nock'
+import nock, { cleanAll } from 'nock'
 import { VideoRepository } from '@contentModule/persistence/repository/video.repository'
 import { MovieRepository } from '@contentModule/persistence/repository/movie.repository'
 import { ContentRepository } from '@contentModule/persistence/repository/content.repository'
-import { ContentManagementService } from '@contentModule/core/service/content-management.service'
 
 describe('ContentController (e2e)', () => {
   let module: TestingModule
@@ -43,7 +44,7 @@ describe('ContentController (e2e)', () => {
     await videoRepository.deleteAll()
     await movieRepository.deleteAll()
     await contentRepository.deleteAll()
-    nock.cleanAll()
+    cleanAll()
   })
 
   afterAll(async () => {

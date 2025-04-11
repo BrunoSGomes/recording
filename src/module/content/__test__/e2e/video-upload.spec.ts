@@ -1,11 +1,12 @@
 import { HttpStatus, INestApplication } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing'
 import { AppModule } from '@src/app.module'
+
 import fs from 'fs'
 import request from 'supertest'
-import nock from 'nock'
-import { ContentRepository } from '@contentModule/persistence/repository/content.repository'
+import nock, { cleanAll } from 'nock'
 import { VideoRepository } from '@contentModule/persistence/repository/video.repository'
+import { ContentRepository } from '@contentModule/persistence/repository/content.repository'
 import { MovieRepository } from '@contentModule/persistence/repository/movie.repository'
 
 describe('VideoUploadController (e2e)', () => {
@@ -38,7 +39,7 @@ describe('VideoUploadController (e2e)', () => {
     await videoRepository.deleteAll()
     await movieRepository.deleteAll()
     await contentRepository.deleteAll()
-    nock.cleanAll()
+    cleanAll()
   })
 
   afterAll(async () => {
@@ -136,6 +137,31 @@ describe('VideoUploadController (e2e)', () => {
             error: 'Bad Request',
             statusCode: 400
           })
+        })
+    })
+
+    it('does not allow non mp4 files', async () => {
+      const video = {
+        title: 'Test Video',
+        description: 'This is a test video',
+        videoUrl: 'uploads/test.mp4',
+        thumbnailUrl: 'uploads/test.jpg',
+        sizeInKb: 100,
+        duration: 100
+      }
+
+      await request(app.getHttpServer())
+        .post('/content/video')
+        .attach('video', './test/fixtures/sample.mp3')
+        .attach('thumbnail', './test/fixtures/sample.jpg')
+        .field('title', video.title)
+        .field('description', video.description)
+        .expect(HttpStatus.BAD_REQUEST)
+        .expect({
+          message:
+            'Invalid file type. Only video/mp4 and image/jpeg are supported.',
+          error: 'Bad Request',
+          statusCode: 400
         })
     })
   })

@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { UserManagementService } from '@identityModule/core/service/user-management.service'
 import { UserRepository } from '@identityModule/persistence/repository/user.repository'
-import { ConfigModule } from '@src/shared/module/config/config.module'
-import { PrismaService } from '@src/shared/module/persistence/prisma/prisma.service'
+import { PrismaService } from '@sharedModules/persistence/prisma/prisma.service'
+import { ConfigModule } from '@sharedModules/config/config.module'
 
 describe('UserManagementService', () => {
   let service: UserManagementService
