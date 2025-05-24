@@ -1,45 +1,51 @@
 import { INestApplication } from '@nestjs/common'
-import { Test, TestingModule } from '@nestjs/testing'
-import { AppModule } from '@src/app.module'
+import { TestingModule } from '@nestjs/testing'
 import { UserModel } from '@identityModule/core/model/user.model'
 import { UserManagementService } from '@identityModule/core/service/user-management.service'
-import { UserRepository } from '@identityModule/persistence/repository/user.repository'
 import request from 'supertest'
+import { createNestApp } from '@testInfra/test-e2e.setup'
+import { IdentityModule } from '@identityModule/identity.module'
+import { testDbClient } from '@testInfra/knex.database'
+import { planFactory } from '@testInfra/factory/identity/plan.test-factory'
+import { subscriptionFactory } from '@testInfra/factory/identity/subscription.test-factory'
+import { Tables } from '@testInfra/enum/table.enum'
+import nock from 'nock'
 
 describe('AuthResolver (e2e)', () => {
   let app: INestApplication
   let userManagementService: UserManagementService
-  let userRepository: UserRepository
   let module: TestingModule
 
   beforeAll(async () => {
-    module = await Test.createTestingModule({
-      imports: [AppModule]
-    }).compile()
+    const nestTestSetup = await createNestApp([IdentityModule])
+    app = nestTestSetup.app
+    module = nestTestSetup.module
 
-    app = module.createNestApplication()
-    await app.init()
     userManagementService = module.get<UserManagementService>(
       UserManagementService
     )
-    userRepository = module.get<UserRepository>(UserRepository)
   })
 
   beforeEach(async () => {
-    await userRepository.clear()
+    await testDbClient(Tables.User).del()
+    await testDbClient(Tables.Subscription).del()
+    await testDbClient(Tables.Plan).del()
   })
   afterAll(async () => {
-    await userRepository.clear()
+    await testDbClient(Tables.User).del()
+    await testDbClient(Tables.Subscription).del()
+    await testDbClient(Tables.Plan).del()
     await module.close()
   })
 
   describe('signIn mutation', () => {
-    it('returns accessToken for valid credentials', async () => {
+    //this is an example of HTTP call between modules
+    it.skip('returns the authenticated user - USING HTTP for module to module calls', async () => {
       const signInInput = {
         email: 'johndoe@example.com',
         password: 'password123'
       }
-      await userManagementService.create(
+      const createdUser = await userManagementService.create(
         UserModel.create({
           firstName: 'John',
           lastName: 'Doe',
@@ -47,6 +53,74 @@ describe('AuthResolver (e2e)', () => {
           password: signInInput.password
         })
       )
+      nock('https://localhost:3000', {
+        encodedQueryParams: true,
+        reqheaders: {
+          Authorization: (): boolean => true
+        }
+      })
+        .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
+        .get(`/subscription/user/${createdUser.id}`)
+        .reply(200, {
+          status: 'ACTIVE'
+        })
+
+      const acessTokenResponse = await request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          query: `
+            mutation {
+              signIn(SignInInput: {
+                email: "${signInInput.email}",
+                password: "${signInInput.password}"
+              }) {
+                accessToken
+              }
+            }
+          `
+        })
+      const response = await request(app.getHttpServer())
+        .post('/graphql')
+        .set(
+          'Authorization',
+          `Bearer ${acessTokenResponse.body.data.signIn.accessToken}`
+        )
+        .send({
+          query: `
+            query {
+              getProfile {
+                email
+              }
+            }
+          `
+        })
+
+      const { email } = response.body.data.getProfile
+
+      expect(email).toEqual(signInInput.email)
+    })
+    it('returns accessToken for valid credentials', async () => {
+      const signInInput = {
+        email: 'johndoe@example.com',
+        password: 'password123'
+      }
+      const createdUser = await userManagementService.create(
+        UserModel.create({
+          firstName: 'John',
+          lastName: 'Doe',
+          email: signInInput.email,
+          password: signInInput.password
+        })
+      )
+
+      const plan = planFactory.build()
+      const subscription = subscriptionFactory.build({
+        planId: plan.id,
+        status: 'ACTIVE' as any,
+        userId: createdUser.id
+      })
+      await testDbClient(Tables.Plan).insert(plan)
+      await testDbClient(Tables.Subscription).insert(subscription)
 
       const response = await request(app.getHttpServer())
         .post('/graphql')
@@ -91,12 +165,13 @@ describe('AuthResolver (e2e)', () => {
     })
   })
   describe('getProfile query', () => {
+    //use local module call instead of HTTP
     it('returns the authenticated user', async () => {
       const signInInput = {
         email: 'johndoe@example.com',
         password: 'password123'
       }
-      await userManagementService.create(
+      const createdUser = await userManagementService.create(
         UserModel.create({
           firstName: 'John',
           lastName: 'Doe',
@@ -104,6 +179,15 @@ describe('AuthResolver (e2e)', () => {
           password: signInInput.password
         })
       )
+
+      const plan = planFactory.build()
+      const subscription = subscriptionFactory.build({
+        planId: plan.id,
+        status: 'ACTIVE' as any,
+        userId: createdUser.id
+      })
+      await testDbClient(Tables.Plan).insert(plan)
+      await testDbClient(Tables.Subscription).insert(subscription)
 
       const acessTokenResponse = await request(app.getHttpServer())
         .post('/graphql')

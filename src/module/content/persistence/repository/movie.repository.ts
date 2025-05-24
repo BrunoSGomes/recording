@@ -1,7 +1,7 @@
-import { DefaultTypeOrmRepository } from '@contentModule/infra/module/typeorm/repository/default-typeorm.repository'
 import { Inject, Injectable } from '@nestjs/common'
+import { DefaultTypeOrmRepository } from '@contentModule/infra/module/typeorm/repository/default-typeorm.repository'
 import { DataSource } from 'typeorm'
-import { Movie } from '../entity/movie.entity'
+import { Movie } from '@contentModule/persistence/entity/movie.entity'
 
 @Injectable()
 export class MovieRepository extends DefaultTypeOrmRepository<Movie> {

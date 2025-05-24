@@ -6,8 +6,26 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  schemas  = ["identity", "test"]
+  schemas  = ["identity", "test", "public"]
 }
+
+// enum SubscriptionStatus {
+//   ACTIVE
+//   INACTIVE
+
+//   @@schema("public")
+//   @@map("status")
+// }
+// model Subscription {
+//   id         String   @id
+//   userId     String
+//   status     SubscriptionStatus
+
+//   @@schema("public")
+//   @@map("Subscription")
+// }
+
+
 
 // enum ContentType {
 //   MOVIE

@@ -40,12 +40,4 @@ export class UserRepository extends DefaultPrismaRepository {
       this.handleAndThrowError(error)
     }
   }
-
-  async clear(): Promise<{ count: number }> {
-    try {
-      return await this.model.deleteMany()
-    } catch (error) {
-      this.handleAndThrowError(error)
-    }
-  }
 }

@@ -2,7 +2,7 @@ import { Column, Entity, JoinColumn, OneToOne } from 'typeorm'
 import { Content } from './content.entity'
 import { Video } from './video.entity'
 import { DefaultEntity } from '@contentModule/infra/module/typeorm/entity/default.entity'
-import { Thumbnail } from './thumbnail.entity'
+import { Thumbnail } from '@contentModule/persistence/entity/thumbnail.entity'
 
 @Entity({ name: 'Movie' })
 export class Movie extends DefaultEntity<Movie> {
@@ -22,5 +22,5 @@ export class Movie extends DefaultEntity<Movie> {
     cascade: true
   })
   @JoinColumn()
-  thumbnail: Thumbnail
+  thumbnail: Thumbnail | null
 }

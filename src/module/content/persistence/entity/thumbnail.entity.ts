@@ -1,8 +1,8 @@
 import { DefaultEntity } from '@contentModule/infra/module/typeorm/entity/default.entity'
 import { Column, Entity } from 'typeorm'
 
-@Entity('Thumbnail')
+@Entity({ name: 'Thumbnail' })
 export class Thumbnail extends DefaultEntity<Thumbnail> {
-  @Column()
+  @Column({ type: 'varchar', nullable: false })
   url: string
 }

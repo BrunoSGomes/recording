@@ -6,25 +6,30 @@ import { DefaultEntity } from '@contentModule/infra/module/typeorm/entity/defaul
 
 @Entity('episode')
 export class Episode extends DefaultEntity<Episode> {
-  @Column()
+  @Column({ type: 'varchar', length: 255, nullable: false })
   title: string
 
-  @Column()
+  @Column('text')
   description: string
 
-  @Column()
+  @Column({ type: 'int', nullable: false })
   season: number
 
-  @Column()
+  @Column({ type: 'int', nullable: false })
   number: number
+
+  @Column({ type: 'uuid', nullable: false })
+  tvShowId: string
 
   @ManyToOne(() => TvShow, (tvShow) => tvShow.episodes)
   tvShow: TvShow
 
   @OneToOne(() => Thumbnail)
   @JoinColumn()
-  thumbnail: Thumbnail
+  thumbnail: Thumbnail | null
 
-  @OneToOne(() => Video, (video) => video.episode)
-  video: Video
+  @OneToOne(() => Video, (video) => video.episode, {
+    cascade: true
+  })
+  video: Video | null
 }
