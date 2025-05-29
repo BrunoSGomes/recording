@@ -9,6 +9,10 @@ import { VideoRepository } from '@contentModule/persistence/repository/video.rep
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@sharedModules/config/config.module'
 import { HttpClientModule } from '@sharedModules/http-client/http-client.module'
+import { AdminTvShowController } from '@contentModule/http/rest/controller/admin-tv-show-controller'
+import { AgeRecommendationService } from '@contentModule/core/service/age-recommendation.service'
+import { VideoMetadataService } from '@contentModule/core/service/video-metadata.service'
+import { VideoProfanityFilterService } from '@contentModule/core/service/video-profanity-filter.service'
 
 @Module({
   imports: [
@@ -16,13 +20,20 @@ import { HttpClientModule } from '@sharedModules/http-client/http-client.module'
     ConfigModule.forRoot(),
     HttpClientModule
   ],
-  controllers: [AdminMovieController, MediaPlayerController],
+  controllers: [
+    AdminMovieController,
+    MediaPlayerController,
+    AdminTvShowController
+  ],
   providers: [
     ContentManagementService,
     MediaPlayerService,
     ContentRepository,
     VideoRepository,
-    ExternalMovieClient
+    ExternalMovieClient,
+    AgeRecommendationService,
+    VideoMetadataService,
+    VideoProfanityFilterService
   ]
 })
 export class ContentModule {}

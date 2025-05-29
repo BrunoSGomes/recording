@@ -2,9 +2,9 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm'
 import { Thumbnail } from './thumbnail.entity'
 import { TvShow } from './tv-show.entity'
 import { Video } from './video.entity'
-import { DefaultEntity } from '@contentModule/infra/module/typeorm/entity/default.entity'
+import { DefaultEntity } from '@sharedModules/persistence/typeorm/entity/default.entity'
 
-@Entity('episode')
+@Entity('Episode')
 export class Episode extends DefaultEntity<Episode> {
   @Column({ type: 'varchar', length: 255, nullable: false })
   title: string
@@ -31,5 +31,5 @@ export class Episode extends DefaultEntity<Episode> {
   @OneToOne(() => Video, (video) => video.episode, {
     cascade: true
   })
-  video: Video | null
+  video: Video
 }

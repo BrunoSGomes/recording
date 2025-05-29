@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core'
-import { TypeOrmMigrationService } from '@contentModule/infra/module/typeorm/service/typeorm-migration.service'
+import { TypeOrmMigrationService } from '@sharedModules/persistence/typeorm/service/typeorm-migration.service'
 import { DataSourceOptions } from 'typeorm'
 import { createPostgresDatabase } from 'typeorm-extension'
 import { PersistenceModule } from '@contentModule/persistence/persistence.module'

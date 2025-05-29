@@ -8,7 +8,8 @@ import { Video } from './entity/video.entity'
 import { ContentRepository } from './repository/content.repository'
 import { MovieRepository } from './repository/movie.repository'
 import { VideoRepository } from './repository/video.repository'
-import { TypeOrmPersistenceModule } from '@contentModule/infra/module/typeorm/typeorm-persistence.module'
+import { TypeOrmPersistenceModule } from '@sharedModules/persistence/typeorm/typeorm-persistence.module'
+import { EpisodeRepository } from '@contentModule/persistence/repository/episode.repository'
 
 @Module({})
 export class PersistenceModule {
@@ -22,8 +23,18 @@ export class PersistenceModule {
           entities: [Content, Movie, Thumbnail, Video, TvShow, Episode]
         })
       ],
-      providers: [ContentRepository, MovieRepository, VideoRepository],
-      exports: [ContentRepository, MovieRepository, VideoRepository]
+      providers: [
+        ContentRepository,
+        MovieRepository,
+        VideoRepository,
+        EpisodeRepository
+      ],
+      exports: [
+        ContentRepository,
+        MovieRepository,
+        VideoRepository,
+        EpisodeRepository
+      ]
     }
   }
 }
