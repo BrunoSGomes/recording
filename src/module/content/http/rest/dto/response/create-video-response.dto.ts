@@ -37,5 +37,6 @@ export class CreateVideoResponseDto {
 
   @IsNumber()
   @Expose()
-  duration: number
+  @IsOptional()
+  duration: number | null
 }

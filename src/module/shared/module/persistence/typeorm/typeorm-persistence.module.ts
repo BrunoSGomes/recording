@@ -1,9 +1,11 @@
 import { DynamicModule, Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { DefaultEntity } from './entity/default.entity'
-import { TypeOrmMigrationService } from './service/typeorm-migration.service'
 import { ConfigModule } from '@sharedModules/config/config.module'
 import { ConfigService } from '@sharedModules/config/service/config.service'
+import { DataSource } from 'typeorm'
+import { addTransactionalDataSource } from 'typeorm-transactional'
+import { DefaultEntity } from './entity/default.entity'
+import { TypeOrmMigrationService } from './service/typeorm-migration.service'
 
 @Module({})
 export class TypeOrmPersistenceModule {
@@ -28,6 +30,13 @@ export class TypeOrmPersistenceModule {
               ...configService.get('database'),
               ...options
             }
+          },
+          async dataSourceFactory(options) {
+            if (!options) {
+              throw new Error('Invalid options passed')
+            }
+
+            return addTransactionalDataSource(new DataSource(options))
           }
         })
       ],

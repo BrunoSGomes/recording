@@ -1,3 +1,6 @@
+import { CreateMovieUseCase } from '@contentModule/core/use-case/create-movie.use-case'
+import { CreateVideoResponseDto } from '@contentModule/http/rest/dto/response/create-video-response.dto'
+import { RestResponseInterceptor } from '@contentModule/http/rest/interceptor/rest-response.interceptor'
 import {
   BadRequestException,
   Body,
@@ -10,10 +13,6 @@ import {
   UseInterceptors
 } from '@nestjs/common'
 import { FileFieldsInterceptor } from '@nestjs/platform-express'
-import { ContentManagementService } from '@contentModule/core/service/content-management.service'
-import { MediaPlayerService } from '@contentModule/core/service/media-player.service'
-import { CreateVideoResponseDto } from '@contentModule/http/rest/dto/response/create-video-response.dto'
-import { RestResponseInterceptor } from '@contentModule/http/rest/interceptor/rest-response.interceptor'
 import { randomUUID } from 'crypto'
 import { Request } from 'express'
 import { diskStorage } from 'multer'
@@ -21,10 +20,7 @@ import { extname } from 'path'
 
 @Controller('admin')
 export class AdminMovieController {
-  constructor(
-    private readonly contentManagementService: ContentManagementService,
-    private readonly mediaPlayerService: MediaPlayerService
-  ) {}
+  constructor(private readonly createMovieUseCase: CreateMovieUseCase) {}
 
   @Post('movie')
   @HttpCode(HttpStatus.CREATED)
@@ -96,10 +92,10 @@ export class AdminMovieController {
       )
     }
 
-    const createdMovie = await this.contentManagementService.createMovie({
+    const createdMovie = await this.createMovieUseCase.execute({
       title: contentData.title,
       description: contentData.description,
-      url: videoFile.path,
+      videoUrl: videoFile.path,
       thumbnailUrl: thumbnailFile.path,
       sizeInKb: videoFile.size
     })

@@ -1,21 +1,20 @@
-import { Module } from '@nestjs/common'
-import { JwtModule } from '@nestjs/jwt'
-import { UserManagementService } from './core/service/user-management.service'
-import { AuthResolver } from './http/graphql/auth.resolver'
-import { UserResolver } from './http/graphql/user.resolver'
-import { UserRepository } from './persistence/repository/user.repository'
+import { BillingModule } from '@billingModule/billing.module'
+import { BillingPublicApiProvider } from '@billingModule/integration/provider/public-api.provider'
 import {
   AuthService,
   jwtConstants
 } from '@identityModule/core/service/authentication.service'
-import { PersistenceModule } from '@sharedModules/persistence/prisma/persistence.module'
-import { GraphQLModule } from '@nestjs/graphql'
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
-import { DomainModuleIntegrationModule } from '@sharedModules/integration/interface/domain-module-integration.module'
+import { Module } from '@nestjs/common'
+import { GraphQLModule } from '@nestjs/graphql'
+import { JwtModule } from '@nestjs/jwt'
 import { BillingSubscriptionStatusApi } from '@sharedModules/integration/interface/billing-integration.interface'
-import { BillingSubscriptionRepository } from '@identityModule/persistence/repository/external/billing-subscription.repository'
-import { BillingPublicApiProvider } from '@billingModule/integration/provider/public-api.provider'
-import { BillingModule } from '@billingModule/billing.module'
+import { DomainModuleIntegrationModule } from '@sharedModules/integration/interface/domain-module-integration.module'
+import { PersistenceModule } from '@sharedModules/persistence/prisma/persistence.module'
+import { UserManagementService } from './core/service/user-management.service'
+import { AuthResolver } from './http/graphql/auth.resolver'
+import { UserResolver } from './http/graphql/user.resolver'
+import { UserRepository } from './persistence/repository/user.repository'
 
 @Module({
   imports: [
@@ -40,8 +39,7 @@ import { BillingModule } from '@billingModule/billing.module'
     AuthResolver,
     UserResolver,
     UserManagementService,
-    UserRepository,
-    BillingSubscriptionRepository
+    UserRepository
   ]
 })
 export class IdentityModule {}

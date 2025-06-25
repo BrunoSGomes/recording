@@ -1,4 +1,5 @@
-import { ContentManagementService } from '@contentModule/core/service/content-management.service'
+import { CreateTvShowEpisodeUseCase } from '@contentModule/core/use-case/create-tv-show-episode.use-case'
+import { CreateTvShowUseCase } from '@contentModule/core/use-case/create-tv-show.use-case'
 import { CreateEpisodeRequestDto } from '@contentModule/http/rest/dto/request/create-episode-request.dto'
 import { CreateTvShowRequestDto } from '@contentModule/http/rest/dto/request/create-tv-show-request.dto'
 import { CreateEpisodeResponseDto } from '@contentModule/http/rest/dto/response/create-episode-response.dto'
@@ -26,7 +27,8 @@ import { extname } from 'node:path'
 @Controller('admin/tv-show')
 export class AdminTvShowController {
   constructor(
-    private readonly contentManagementService: ContentManagementService
+    private readonly createTvShowUseCase: CreateTvShowUseCase,
+    private readonly createEspisodeUseCase: CreateTvShowEpisodeUseCase
   ) {}
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -59,7 +61,7 @@ export class AdminTvShowController {
     )
     thumbnail: Express.Multer.File
   ): Promise<CreateTvShowResponseDto> {
-    const content = await this.contentManagementService.createTvShow({
+    const content = await this.createTvShowUseCase.execute({
       title: contentData.title,
       description: contentData.description,
       thumbnailUrl: thumbnail.path
@@ -108,14 +110,12 @@ export class AdminTvShowController {
       throw new BadRequestException('Video file is required.')
     }
 
-    const createdEpisode = await this.contentManagementService.createEpisode(
-      contentId,
-      {
-        ...episodeData,
-        videoUrl: video.path,
-        videoSizeInKb: video.size
-      }
-    )
+    const createdEpisode = await this.createEspisodeUseCase.execute({
+      ...episodeData,
+      videoUrl: video.path,
+      videoSizeInKb: video.size,
+      contentId
+    })
 
     return {
       id: createdEpisode.id,

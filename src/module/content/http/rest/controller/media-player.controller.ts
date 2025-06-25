@@ -1,5 +1,5 @@
 import { VideoNotFoundException } from '@contentModule/core/exception/video-not-found.exception'
-import { MediaPlayerService } from '@contentModule/core/service/media-player.service'
+import { GetStreamingURLUseCase } from '@contentModule/core/use-case/get-streaming-url.use-case'
 import {
   Controller,
   Get,
@@ -15,7 +15,9 @@ import path from 'path'
 
 @Controller('stream')
 export class MediaPlayerController {
-  constructor(private readonly mediaPlayerService: MediaPlayerService) {}
+  constructor(
+    private readonly getStreamingURLUseCase: GetStreamingURLUseCase
+  ) {}
 
   @Get(':videoId')
   @Header('Content-Type', 'video/mp4')
@@ -25,7 +27,7 @@ export class MediaPlayerController {
     @Res() res: Response
   ) {
     try {
-      const url = await this.mediaPlayerService.prepareStreaming(videoId)
+      const url = await this.getStreamingURLUseCase.execute(videoId)
 
       const videoPath = path.join('.', url)
       const fileSize = fs.statSync(videoPath).size

@@ -1,13 +1,13 @@
 import { HttpStatus, INestApplication } from '@nestjs/common'
 import { TestingModule } from '@nestjs/testing'
 
-import fs from 'fs'
-import request from 'supertest'
-import nock, { cleanAll } from 'nock'
-import { createNestApp } from '@testInfra/test-e2e.setup'
 import { ContentModule } from '@contentModule/content.module'
-import { testDbClient } from '@testInfra/knex.database'
 import { Tables } from '@testInfra/enum/table.enum'
+import { testDbClient } from '@testInfra/knex.database'
+import { createNestApp } from '@testInfra/test-e2e.setup'
+import fs from 'fs'
+import nock, { cleanAll } from 'nock'
+import request from 'supertest'
 
 describe('VideoUploadController (e2e)', () => {
   let module: TestingModule
@@ -87,7 +87,7 @@ describe('VideoUploadController (e2e)', () => {
         videoUrl: 'uploads/test.mp4',
         thumbnailUrl: 'uploads/test.jpg',
         sizeInKb: 1430145,
-        duration: 100
+        duration: null
       }
 
       await request(app.getHttpServer())
@@ -113,7 +113,7 @@ describe('VideoUploadController (e2e)', () => {
         videoUrl: 'uploads/test.mp4',
         thumbnailUrl: 'uploads/test.jpg',
         sizeInKb: 1430145,
-        duration: 100
+        duration: null
       }
 
       await request(app.getHttpServer())
@@ -138,7 +138,7 @@ describe('VideoUploadController (e2e)', () => {
         videoUrl: 'uploads/test.mp4',
         thumbnailUrl: 'uploads/test.jpg',
         sizeInKb: 100,
-        duration: 100
+        duration: null
       }
 
       await request(app.getHttpServer())

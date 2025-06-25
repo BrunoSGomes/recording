@@ -1,4 +1,6 @@
+import { EpisodeRepository } from '@contentModule/persistence/repository/episode.repository'
 import { DynamicModule, Module } from '@nestjs/common'
+import { TypeOrmPersistenceModule } from '@sharedModules/persistence/typeorm/typeorm-persistence.module'
 import { Content } from './entity/content.entity'
 import { Episode } from './entity/episode.entity'
 import { Movie } from './entity/movie.entity'
@@ -8,8 +10,6 @@ import { Video } from './entity/video.entity'
 import { ContentRepository } from './repository/content.repository'
 import { MovieRepository } from './repository/movie.repository'
 import { VideoRepository } from './repository/video.repository'
-import { TypeOrmPersistenceModule } from '@sharedModules/persistence/typeorm/typeorm-persistence.module'
-import { EpisodeRepository } from '@contentModule/persistence/repository/episode.repository'
 
 @Module({})
 export class PersistenceModule {

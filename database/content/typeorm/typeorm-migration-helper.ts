@@ -1,9 +1,10 @@
+import { PersistenceModule } from '@contentModule/persistence/persistence.module'
 import { NestFactory } from '@nestjs/core'
+import { ConfigService } from '@sharedModules/config/service/config.service'
 import { TypeOrmMigrationService } from '@sharedModules/persistence/typeorm/service/typeorm-migration.service'
 import { DataSourceOptions } from 'typeorm'
 import { createPostgresDatabase } from 'typeorm-extension'
-import { PersistenceModule } from '@contentModule/persistence/persistence.module'
-import { ConfigService } from '@sharedModules/config/service/config.service'
+import { initializeTransactionalContext } from 'typeorm-transactional'
 
 const createDatabaseModule = async () => {
   return await NestFactory.createApplicationContext(
@@ -14,6 +15,7 @@ const createDatabaseModule = async () => {
 }
 
 export const migrate = async () => {
+  initializeTransactionalContext()
   const migrationModule = await createDatabaseModule()
   migrationModule.init()
   const configService = migrationModule.get<ConfigService>(ConfigService)

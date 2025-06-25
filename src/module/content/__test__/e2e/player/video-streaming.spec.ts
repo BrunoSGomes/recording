@@ -1,28 +1,26 @@
 import { HttpStatus, INestApplication } from '@nestjs/common'
 import { TestingModule } from '@nestjs/testing'
-import { ContentManagementService } from '@contentModule/core/service/content-management.service'
 
-import fs from 'fs'
-import request from 'supertest'
-import nock, { cleanAll } from 'nock'
 import { ContentModule } from '@contentModule/content.module'
-import { createNestApp } from '@testInfra/test-e2e.setup'
-import { testDbClient } from '@testInfra/knex.database'
+import { CreateMovieUseCase } from '@contentModule/core/use-case/create-movie.use-case'
 import { Tables } from '@testInfra/enum/table.enum'
+import { testDbClient } from '@testInfra/knex.database'
+import { createNestApp } from '@testInfra/test-e2e.setup'
+import fs from 'fs'
+import nock, { cleanAll } from 'nock'
+import request from 'supertest'
 
 describe('ContentController (e2e)', () => {
   let module: TestingModule
   let app: INestApplication
-  let contentManagementService: ContentManagementService
+  let createMovieUseCase: CreateMovieUseCase
 
   beforeAll(async () => {
     const nestTestSetup = await createNestApp([ContentModule])
     app = nestTestSetup.app
     module = nestTestSetup.module
 
-    contentManagementService = module.get<ContentManagementService>(
-      ContentManagementService
-    )
+    createMovieUseCase = module.get<CreateMovieUseCase>(CreateMovieUseCase)
   })
 
   beforeEach(async () => {
@@ -83,10 +81,10 @@ describe('ContentController (e2e)', () => {
             }
           ]
         })
-      const createdMovie = await contentManagementService.createMovie({
+      const createdMovie = await createMovieUseCase.execute({
         title: 'Test Video',
         description: 'This is a test video',
-        url: './test/fixtures/sample.mp4',
+        videoUrl: './test/fixtures/sample.mp4',
         thumbnailUrl: './test/fixtures/sample.jpg',
         sizeInKb: 1430145
       })

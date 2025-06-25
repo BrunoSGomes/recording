@@ -1,17 +1,19 @@
+import { ContentModule } from '@contentModule/content.module'
 import { HttpStatus, INestApplication } from '@nestjs/common'
 import { TestingModule } from '@nestjs/testing'
 
-import { createNestApp } from '@testInfra/test-e2e.setup'
-import request from 'supertest'
-import { testDbClient } from '@testInfra/knex.database'
 import { Tables } from '@testInfra/enum/table.enum'
+import { testDbClient } from '@testInfra/knex.database'
+import { createNestApp } from '@testInfra/test-e2e.setup'
+import fs from 'fs'
+import request from 'supertest'
 
 describe('AdminTvShowController (e2e)', () => {
   let module: TestingModule
   let app: INestApplication
 
   beforeAll(async () => {
-    const nestTestSetup = await createNestApp()
+    const nestTestSetup = await createNestApp([ContentModule])
     app = nestTestSetup.app
     module = nestTestSetup.module
   })
@@ -34,6 +36,7 @@ describe('AdminTvShowController (e2e)', () => {
     //TODO move it to be shared
     await app.close()
     await module.close()
+    fs.rmSync('./uploads', { recursive: true, force: true })
   })
 
   describe('/admin/tv-show (POST)', () => {
@@ -81,7 +84,7 @@ describe('AdminTvShowController (e2e)', () => {
         season: 1,
         number: 1,
         sizeInKb: 1430145,
-        duration: 100
+        duration: null
       }
 
       await request(app.getHttpServer())
@@ -124,7 +127,7 @@ describe('AdminTvShowController (e2e)', () => {
         season: 1,
         number: 1,
         sizeInKb: 1430145,
-        duration: 100
+        duration: null
       }
 
       /**

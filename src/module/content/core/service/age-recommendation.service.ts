@@ -1,9 +1,12 @@
+import { MovieContentModel } from '@contentModule/core/model/movie-content.model'
+import { TvShowContentModel } from '@contentModule/core/model/tv-show-content.model'
 import { Injectable } from '@nestjs/common'
 
 @Injectable()
 export class AgeRecommendationService {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async getAgeRecommendationForContent(_videoUrl: string): Promise<number> {
-    return await 5
+  async setAgeRecommendationForContent(
+    content: TvShowContentModel | MovieContentModel
+  ): Promise<void> {
+    content.ageRecommendation = 18
   }
 }

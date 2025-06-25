@@ -1,6 +1,8 @@
+import { initializeTransactionalContext } from 'typeorm-transactional'
 import { getDataSource } from './typeorm-migration-helper'
 
 const prepareDateSourceForMigration = async () => {
+  initializeTransactionalContext()
   const dataSource = await getDataSource()
   /**
    * In order to use Nest modules and have just one connection

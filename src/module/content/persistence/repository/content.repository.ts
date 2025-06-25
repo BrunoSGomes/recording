@@ -1,14 +1,18 @@
-import { Inject, Injectable } from '@nestjs/common'
-import { DefaultTypeOrmRepository } from '@sharedModules/persistence/typeorm/repository/default-typeorm.repository'
-import { DataSource } from 'typeorm'
-import { Content } from '@contentModule/persistence/entity/content.entity'
 import { MovieContentModel } from '@contentModule/core/model/movie-content.model'
 import { TvShowContentModel } from '@contentModule/core/model/tv-show-content.model'
+import { Content } from '@contentModule/persistence/entity/content.entity'
+import { Injectable } from '@nestjs/common'
+import { InjectDataSource } from '@nestjs/typeorm'
+import { DefaultTypeOrmRepository } from '@sharedModules/persistence/typeorm/repository/default-typeorm.repository'
+import { DataSource } from 'typeorm'
 
 @Injectable()
 export class ContentRepository extends DefaultTypeOrmRepository<Content> {
-  constructor(@Inject(DataSource) readonly dataSource: DataSource) {
-    super(Content, dataSource)
+  constructor(
+    @InjectDataSource()
+    dataSource: DataSource
+  ) {
+    super(Content, dataSource.manager)
   }
 
   async saveMovie(entity: MovieContentModel): Promise<MovieContentModel> {
