@@ -1,3 +1,4 @@
+import { VideoMetadata } from '@contentModule/persistence/entity/video-metadata.entity'
 import { EpisodeRepository } from '@contentModule/persistence/repository/episode.repository'
 import { DynamicModule, Module } from '@nestjs/common'
 import { TypeOrmPersistenceModule } from '@sharedModules/persistence/typeorm/typeorm-persistence.module'
@@ -20,7 +21,15 @@ export class PersistenceModule {
       imports: [
         TypeOrmPersistenceModule.forRoot({
           migrations,
-          entities: [Content, Movie, Thumbnail, Video, TvShow, Episode]
+          entities: [
+            Content,
+            Movie,
+            Thumbnail,
+            Video,
+            TvShow,
+            Episode,
+            VideoMetadata
+          ]
         })
       ],
       providers: [

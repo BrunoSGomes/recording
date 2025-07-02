@@ -1,8 +1,9 @@
 import { HttpStatus, INestApplication } from '@nestjs/common'
 import { TestingModule } from '@nestjs/testing'
 
+import { CONTENT_TEST_FIXTURES } from '@contentModule/__test__/constants'
+import { videoFactory } from '@contentModule/__test__/factory/video.factory'
 import { ContentModule } from '@contentModule/content.module'
-import { CreateMovieUseCase } from '@contentModule/core/use-case/create-movie.use-case'
 import { Tables } from '@testInfra/enum/table.enum'
 import { testDbClient } from '@testInfra/knex.database'
 import { createNestApp } from '@testInfra/test-e2e.setup'
@@ -13,14 +14,11 @@ import request from 'supertest'
 describe('ContentController (e2e)', () => {
   let module: TestingModule
   let app: INestApplication
-  let createMovieUseCase: CreateMovieUseCase
 
   beforeAll(async () => {
     const nestTestSetup = await createNestApp([ContentModule])
     app = nestTestSetup.app
     module = nestTestSetup.module
-
-    createMovieUseCase = module.get<CreateMovieUseCase>(CreateMovieUseCase)
   })
 
   beforeEach(async () => {
@@ -30,6 +28,7 @@ describe('ContentController (e2e)', () => {
   })
 
   afterEach(async () => {
+    await testDbClient(Tables.VideoMetadata).del()
     await testDbClient(Tables.Video).del()
     await testDbClient(Tables.Movie).del()
     await testDbClient(Tables.Content).del()
@@ -81,19 +80,16 @@ describe('ContentController (e2e)', () => {
             }
           ]
         })
-      const createdMovie = await createMovieUseCase.execute({
-        title: 'Test Video',
-        description: 'This is a test video',
-        videoUrl: './test/fixtures/sample.mp4',
-        thumbnailUrl: './test/fixtures/sample.jpg',
-        sizeInKb: 1430145
+      const fakeVideo = videoFactory.build({
+        url: `${CONTENT_TEST_FIXTURES}/sample.mp4`
       })
+      await testDbClient(Tables.Video).insert(fakeVideo)
 
       const fileSize = 1430145
       const range = `bytes=0-${fileSize - 1}`
 
       const response = await request(app.getHttpServer())
-        .get(`/stream/${createdMovie.movie.video.id}`)
+        .get(`/stream/${fakeVideo.id}`)
         .set('Range', range)
         .expect(HttpStatus.PARTIAL_CONTENT)
 
