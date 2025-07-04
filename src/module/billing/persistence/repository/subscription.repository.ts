@@ -1,36 +1,23 @@
-import { Inject, Injectable } from '@nestjs/common'
-import { SubscriptionModel } from '@billingModule/core/model/subscription.model'
-import * as schema from '@billingModule/persistence/database.schema'
-import { subscriptionsTable } from '@billingModule/persistence/database.schema'
-import { eq, InferSelectModel } from 'drizzle-orm'
-import { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
-import { DrizzleDefaultRepository } from '@sharedModules/persistence/drizzle/repository/drizzle-default.repository'
+import { Subscription } from '@billingModule/persistence/entity/subscription.entity'
+import { Injectable } from '@nestjs/common'
+import { InjectDataSource } from '@nestjs/typeorm'
+import { DefaultTypeOrmRepository } from '@sharedModules/persistence/typeorm/repository/default-typeorm.repository'
+import { DataSource } from 'typeorm'
 
 @Injectable()
-export class SubscriptionRepository extends DrizzleDefaultRepository<
-  SubscriptionModel,
-  typeof subscriptionsTable
-> {
+export class SubscriptionRepository extends DefaultTypeOrmRepository<Subscription> {
   constructor(
-    @Inject('DB_POSTGRES')
-    protected readonly db: PostgresJsDatabase<typeof schema>
+    @InjectDataSource('billing')
+    dataSource: DataSource
   ) {
-    super(db, subscriptionsTable)
+    super(Subscription, dataSource.manager)
   }
 
-  async findByUserId(userId: string): Promise<SubscriptionModel | null> {
-    const res = await this.db
-      .select()
-      .from(subscriptionsTable)
-      .where(eq(subscriptionsTable.userId, userId))
-      .limit(1)
-    if (res.length === 0) return null
-    return this.mapToModel(res[0])
-  }
-
-  protected mapToModel(
-    data: InferSelectModel<typeof subscriptionsTable>
-  ): SubscriptionModel {
-    return SubscriptionModel.createFrom(data)
+  async findOneByUserId(userId: string): Promise<Subscription | null> {
+    return this.findOne({
+      where: {
+        userId
+      }
+    })
   }
 }

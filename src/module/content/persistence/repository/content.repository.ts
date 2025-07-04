@@ -9,7 +9,7 @@ import { DataSource } from 'typeorm'
 @Injectable()
 export class ContentRepository extends DefaultTypeOrmRepository<Content> {
   constructor(
-    @InjectDataSource()
+    @InjectDataSource('content')
     dataSource: DataSource
   ) {
     super(Content, dataSource.manager)

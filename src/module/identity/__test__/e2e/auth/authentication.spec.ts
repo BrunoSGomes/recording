@@ -1,15 +1,12 @@
+import { UserManagementService } from '@identityModule/core/service/user-management.service'
+import { IdentityModule } from '@identityModule/identity.module'
 import { INestApplication } from '@nestjs/common'
 import { TestingModule } from '@nestjs/testing'
-import { UserModel } from '@identityModule/core/model/user.model'
-import { UserManagementService } from '@identityModule/core/service/user-management.service'
-import request from 'supertest'
-import { createNestApp } from '@testInfra/test-e2e.setup'
-import { IdentityModule } from '@identityModule/identity.module'
-import { testDbClient } from '@testInfra/knex.database'
-import { planFactory } from '@testInfra/factory/identity/plan.test-factory'
-import { subscriptionFactory } from '@testInfra/factory/identity/subscription.test-factory'
 import { Tables } from '@testInfra/enum/table.enum'
+import { testDbClient } from '@testInfra/knex.database'
+import { createNestApp } from '@testInfra/test-e2e.setup'
 import nock from 'nock'
+import request from 'supertest'
 
 describe('AuthResolver (e2e)', () => {
   let app: INestApplication
@@ -39,20 +36,17 @@ describe('AuthResolver (e2e)', () => {
   })
 
   describe('signIn mutation', () => {
-    //this is an example of HTTP call between modules
-    it.skip('returns the authenticated user - USING HTTP for module to module calls', async () => {
+    it('returns accessToken for valid credentials', async () => {
       const signInInput = {
         email: 'johndoe@example.com',
         password: 'password123'
       }
-      const createdUser = await userManagementService.create(
-        UserModel.create({
-          firstName: 'John',
-          lastName: 'Doe',
-          email: signInInput.email,
-          password: signInInput.password
-        })
-      )
+      const createdUser = await userManagementService.create({
+        firstName: 'John',
+        lastName: 'Doe',
+        email: signInInput.email,
+        password: signInInput.password
+      })
       nock('https://localhost:3000', {
         encodedQueryParams: true,
         reqheaders: {
@@ -60,67 +54,10 @@ describe('AuthResolver (e2e)', () => {
         }
       })
         .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
-        .get(`/subscription/user/${createdUser.id}`)
+        .get(`/subscription/user/${createdUser.id}/active`)
         .reply(200, {
-          status: 'ACTIVE'
+          isActive: true
         })
-
-      const acessTokenResponse = await request(app.getHttpServer())
-        .post('/graphql')
-        .send({
-          query: `
-            mutation {
-              signIn(SignInInput: {
-                email: "${signInInput.email}",
-                password: "${signInInput.password}"
-              }) {
-                accessToken
-              }
-            }
-          `
-        })
-      const response = await request(app.getHttpServer())
-        .post('/graphql')
-        .set(
-          'Authorization',
-          `Bearer ${acessTokenResponse.body.data.signIn.accessToken}`
-        )
-        .send({
-          query: `
-            query {
-              getProfile {
-                email
-              }
-            }
-          `
-        })
-
-      const { email } = response.body.data.getProfile
-
-      expect(email).toEqual(signInInput.email)
-    })
-    it('returns accessToken for valid credentials', async () => {
-      const signInInput = {
-        email: 'johndoe@example.com',
-        password: 'password123'
-      }
-      const createdUser = await userManagementService.create(
-        UserModel.create({
-          firstName: 'John',
-          lastName: 'Doe',
-          email: signInInput.email,
-          password: signInInput.password
-        })
-      )
-
-      const plan = planFactory.build()
-      const subscription = subscriptionFactory.build({
-        planId: plan.id,
-        status: 'ACTIVE' as any,
-        userId: createdUser.id
-      })
-      await testDbClient(Tables.Plan).insert(plan)
-      await testDbClient(Tables.Subscription).insert(subscription)
 
       const response = await request(app.getHttpServer())
         .post('/graphql')
@@ -161,33 +98,78 @@ describe('AuthResolver (e2e)', () => {
           `
         })
         .expect(200)
-      expect(response.body.errors[0].message).toEqual('Cannot authorize user')
+      expect(response.body.errors[0].message).toEqual(
+        'Cannot authorize user: johndoe@example.com'
+      )
     })
-  })
-  describe('getProfile query', () => {
-    //use local module call instead of HTTP
-    it('returns the authenticated user', async () => {
+    it('returns unauthorized if the subscription is not active', async () => {
       const signInInput = {
         email: 'johndoe@example.com',
         password: 'password123'
       }
-      const createdUser = await userManagementService.create(
-        UserModel.create({
-          firstName: 'John',
-          lastName: 'Doe',
-          email: signInInput.email,
-          password: signInInput.password
-        })
-      )
 
-      const plan = planFactory.build()
-      const subscription = subscriptionFactory.build({
-        planId: plan.id,
-        status: 'ACTIVE' as any,
-        userId: createdUser.id
+      const createdUser = await userManagementService.create({
+        firstName: 'John',
+        lastName: 'Doe',
+        email: signInInput.email,
+        password: signInInput.password
       })
-      await testDbClient(Tables.Plan).insert(plan)
-      await testDbClient(Tables.Subscription).insert(subscription)
+      nock('https://localhost:3000', {
+        encodedQueryParams: true,
+        reqheaders: {
+          Authorization: (): boolean => true
+        }
+      })
+        .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
+        .get(`/subscription/user/${createdUser.id}/active`)
+        .reply(200, {
+          isActive: false
+        })
+
+      const response = await request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          query: `
+            mutation {
+              signIn(SignInInput: {
+                email: "${signInInput.email}",
+                password: "${signInInput.password}"
+              }) {
+                accessToken
+              }
+            }
+          `
+        })
+        .expect(200)
+      expect(response.body.errors[0].message).toEqual(
+        'User subscription is not active: johndoe@example.com'
+      )
+    })
+  })
+  describe('getProfile query', () => {
+    //Used in examples about module to module calls, its skiped because the default is to use local calls
+    it('returns the authenticated user - USING HTTP for module to module calls', async () => {
+      const signInInput = {
+        email: 'johndoe@example.com',
+        password: 'password123'
+      }
+      const createdUser = await userManagementService.create({
+        firstName: 'John',
+        lastName: 'Doe',
+        email: signInInput.email,
+        password: signInInput.password
+      })
+      nock('https://localhost:3000', {
+        encodedQueryParams: true,
+        reqheaders: {
+          Authorization: (): boolean => true
+        }
+      })
+        .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
+        .get(`/subscription/user/${createdUser.id}/active`)
+        .reply(200, {
+          isActive: true
+        })
 
       const acessTokenResponse = await request(app.getHttpServer())
         .post('/graphql')

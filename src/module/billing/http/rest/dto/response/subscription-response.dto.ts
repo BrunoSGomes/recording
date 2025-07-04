@@ -1,6 +1,6 @@
-import { SubscriptionStatus } from '@billingModule/core/model/subscription.model'
+import { SubscriptionStatus } from '@billingModule/core/enum/subscription-status.enum'
 import { DefaultResponseDto } from '@billingModule/http/rest/dto/response/default-response.dto'
-import { Expose, Type } from 'class-transformer'
+import { Expose } from 'class-transformer'
 import {
   IsBoolean,
   IsDateString,
@@ -74,8 +74,4 @@ export class SubscriptionResponseDto extends DefaultResponseDto {
   @Expose()
   @IsNotEmpty()
   readonly autoRenew: boolean
-
-  @Expose()
-  @Type(() => PlanResponseDto)
-  readonly plan: PlanResponseDto
 }

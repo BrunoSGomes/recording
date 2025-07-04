@@ -1,3 +1,6 @@
+import { jwtConstants } from '@identityModule/core/service/authentication.service'
+import { UserManagementService } from '@identityModule/core/service/user-management.service'
+import { User } from '@identityModule/persistence/entity/user.entity'
 import {
   CanActivate,
   ContextType,
@@ -7,13 +10,10 @@ import {
 } from '@nestjs/common'
 import { GqlExecutionContext } from '@nestjs/graphql'
 import { JwtService } from '@nestjs/jwt'
-import { UserModel } from '@identityModule/core/model/user.model'
-import { jwtConstants } from '@identityModule/core/service/authentication.service'
-import { UserManagementService } from '@identityModule/core/service/user-management.service'
 import { Request } from 'express'
 
 export interface AuthenticatedRequest extends Request {
-  user: UserModel
+  user: User
 }
 @Injectable()
 export class AuthGuard implements CanActivate {

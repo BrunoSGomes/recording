@@ -7,7 +7,7 @@ import { DataSource } from 'typeorm'
 @Injectable()
 export class VideoRepository extends DefaultTypeOrmRepository<Video> {
   constructor(
-    @InjectDataSource()
+    @InjectDataSource('content')
     dataSource: DataSource
   ) {
     super(Video, dataSource.manager)

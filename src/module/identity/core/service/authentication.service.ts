@@ -1,9 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common'
-import { JwtService } from '@nestjs/jwt'
 import { UserUnauthorizedException } from '@identityModule/core/exception/user-unauthorized.exception'
 import { UserRepository } from '@identityModule/persistence/repository/user.repository'
-import { compare } from 'bcrypt'
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
+import { JwtService } from '@nestjs/jwt'
 import { BillingSubscriptionStatusApi } from '@sharedModules/integration/interface/billing-integration.interface'
+import { compare } from 'bcrypt'
 
 // TODO: move this to a .env file and config
 export const jwtConstants = {
@@ -23,9 +23,10 @@ export class AuthService {
     email: string,
     password: string
   ): Promise<{ accessToken: string }> {
-    const user = await this.userRepository.findOneBy({ email })
+    const user = await this.userRepository.findOneByEmail(email)
+
     if (!user || !(await this.comparePassword(password, user.password))) {
-      throw new UserUnauthorizedException(`Cannot authorize user: ${email}`)
+      throw new UnauthorizedException(`Cannot authorize user: ${email}`)
     }
     const isSubscriptionActive =
       await this.subscriptionServiceClient.isUserSubscriptionActive(user.id)

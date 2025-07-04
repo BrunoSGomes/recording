@@ -23,11 +23,7 @@ import { ConfigModule } from '@sharedModules/config/config.module'
 import { HttpClientModule } from '@sharedModules/http-client/http-client.module'
 
 @Module({
-  imports: [
-    PersistenceModule.forRoot(),
-    ConfigModule.forRoot(),
-    HttpClientModule
-  ],
+  imports: [PersistenceModule, ConfigModule.forRoot(), HttpClientModule],
   controllers: [
     AdminMovieController,
     MediaPlayerController,

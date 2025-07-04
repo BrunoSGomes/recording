@@ -7,7 +7,7 @@ import { DataSource } from 'typeorm'
 @Injectable()
 export class EpisodeRepository extends DefaultTypeOrmRepository<Episode> {
   constructor(
-    @InjectDataSource()
+    @InjectDataSource('content')
     dataSource: DataSource
   ) {
     super(Episode, dataSource.manager)

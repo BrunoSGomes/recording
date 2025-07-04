@@ -1,49 +1,35 @@
-import { VideoMetadata } from '@contentModule/persistence/entity/video-metadata.entity'
+import { ContentRepository } from '@contentModule/persistence/repository/content.repository'
 import { EpisodeRepository } from '@contentModule/persistence/repository/episode.repository'
-import { DynamicModule, Module } from '@nestjs/common'
+import { VideoRepository } from '@contentModule/persistence/repository/video.repository'
+import { dataSourceOptionsFactory } from '@contentModule/persistence/typeorm-datasource.factory'
+import { Module } from '@nestjs/common'
+import { ConfigModule } from '@sharedModules/config/config.module'
+import { ConfigService } from '@sharedModules/config/service/config.service'
 import { TypeOrmPersistenceModule } from '@sharedModules/persistence/typeorm/typeorm-persistence.module'
-import { Content } from './entity/content.entity'
-import { Episode } from './entity/episode.entity'
-import { Movie } from './entity/movie.entity'
-import { Thumbnail } from './entity/thumbnail.entity'
-import { TvShow } from './entity/tv-show.entity'
-import { Video } from './entity/video.entity'
-import { ContentRepository } from './repository/content.repository'
-import { MovieRepository } from './repository/movie.repository'
-import { VideoRepository } from './repository/video.repository'
+import { DataSource } from 'typeorm'
+import { addTransactionalDataSource } from 'typeorm-transactional'
 
-@Module({})
-export class PersistenceModule {
-  static forRoot(opts?: { migrations?: string[] }): DynamicModule {
-    const { migrations } = opts || {}
-    return {
-      module: PersistenceModule,
-      imports: [
-        TypeOrmPersistenceModule.forRoot({
-          migrations,
-          entities: [
-            Content,
-            Movie,
-            Thumbnail,
-            Video,
-            TvShow,
-            Episode,
-            VideoMetadata
-          ]
+@Module({
+  imports: [
+    TypeOrmPersistenceModule.forRoot({
+      imports: [ConfigModule.forRoot()],
+      name: 'content',
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        return dataSourceOptionsFactory(configService)
+      },
+      dataSourceFactory: async (options) => {
+        if (!options) {
+          throw new Error('Invalid options passed')
+        }
+        return addTransactionalDataSource({
+          name: options.name,
+          dataSource: new DataSource(options)
         })
-      ],
-      providers: [
-        ContentRepository,
-        MovieRepository,
-        VideoRepository,
-        EpisodeRepository
-      ],
-      exports: [
-        ContentRepository,
-        MovieRepository,
-        VideoRepository,
-        EpisodeRepository
-      ]
-    }
-  }
-}
+      }
+    })
+  ],
+  providers: [ContentRepository, EpisodeRepository, VideoRepository],
+  exports: [ContentRepository, EpisodeRepository, VideoRepository]
+})
+export class PersistenceModule {}

@@ -35,6 +35,10 @@ export abstract class DefaultTypeOrmRepository<T extends DefaultEntity<T>> {
     return this.repository.findOne(options)
   }
 
+  async findOne(options: FindOneOptions<T>): Promise<T | null> {
+    return this.repository.findOne(options)
+  }
+
   async exists(id: string): Promise<boolean> {
     return this.repository.exists({
       where: { id } as FindOptionsWhere<T>
