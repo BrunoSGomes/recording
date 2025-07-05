@@ -1,0 +1,11 @@
+{
+  "jestrunner.configPath": "test/jest.e2e.ts",
+  "jestrunner.codeLensSelector": "**/*.{test,spec,e2e-spec}.{js,jsx,ts,tsx}",
+  "jestrunner.debugOptions": {
+    "skipFiles": ["<node_internals>/**"],
+    "runtimeExecutable": "${env:HOME}/.nvm/versions/node/v21.7.3/bin/node",
+    "console": "integratedTerminal",
+    "sourceMaps": true,
+    "internalConsoleOptions": "neverOpen"
+  }
+}
