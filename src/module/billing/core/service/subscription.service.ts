@@ -2,8 +2,7 @@ import { SubscriptionStatus } from '@billingModule/core/enum/subscription-status
 import { Subscription } from '@billingModule/persistence/entity/subscription.entity'
 import { PlanRepository } from '@billingModule/persistence/repository/plan.repository'
 import { SubscriptionRepository } from '@billingModule/persistence/repository/subscription.repository'
-import { Injectable } from '@nestjs/common'
-import { NotFoundDomainException } from '@sharedLibs/core/exeption/not-found-domain.exception'
+import { Injectable, NotFoundException } from '@nestjs/common'
 
 @Injectable()
 export class SubscriptionService {
@@ -19,7 +18,7 @@ export class SubscriptionService {
   }): Promise<Subscription> {
     const plan = await this.planRepository.findOneById(planId)
     if (!plan) {
-      throw new NotFoundDomainException(`Plan with id ${planId} not found`)
+      throw new NotFoundException(`Plan with id ${planId} not found`)
     }
     const subscription = new Subscription({
       plan,

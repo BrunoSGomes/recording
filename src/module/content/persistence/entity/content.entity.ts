@@ -1,8 +1,8 @@
+import { ContentType } from '@contentModule/core/enum/content-type.enum'
+import { DefaultEntity } from '@sharedModules/persistence/typeorm/entity/default.entity'
 import { Column, Entity, OneToOne } from 'typeorm'
 import { Movie } from './movie.entity'
 import { TvShow } from './tv-show.entity'
-import { DefaultEntity } from '@sharedModules/persistence/typeorm/entity/default.entity'
-import { ContentType } from '@contentModule/core/enum/content-type.enum'
 
 @Entity({ name: 'Content' })
 export class Content extends DefaultEntity<Content> {
@@ -21,10 +21,10 @@ export class Content extends DefaultEntity<Content> {
   @OneToOne(() => Movie, (movie) => movie.content, {
     cascade: true
   })
-  movie?: Movie
+  movie: Movie | null
 
   @OneToOne(() => TvShow, (tvShow) => tvShow.content, {
     cascade: true
   })
-  tvShow?: TvShow
+  tvShow: TvShow | null
 }
