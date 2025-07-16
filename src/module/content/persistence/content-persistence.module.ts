@@ -32,4 +32,4 @@ import { addTransactionalDataSource } from 'typeorm-transactional'
   providers: [ContentRepository, EpisodeRepository, VideoRepository],
   exports: [ContentRepository, EpisodeRepository, VideoRepository]
 })
-export class PersistenceModule {}
+export class ContentPersistenceModule {}

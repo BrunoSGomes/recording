@@ -3,9 +3,10 @@ import { SubscriptionController } from '@billingModule/http/rest/controller/subs
 import { BillingPublicApiProvider } from '@billingModule/integration/provider/public-api.provider'
 import { BillingPersistenceModule } from '@billingModule/persistence/billing-persistence.module'
 import { Module } from '@nestjs/common'
+import { AuthModule } from '@sharedModules/auth/auth.module'
 
 @Module({
-  imports: [BillingPersistenceModule],
+  imports: [BillingPersistenceModule, AuthModule],
   providers: [SubscriptionService, BillingPublicApiProvider],
   controllers: [SubscriptionController],
   exports: [BillingPublicApiProvider]

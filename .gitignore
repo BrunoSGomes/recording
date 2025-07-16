@@ -16,6 +16,8 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
+projectStructure.cache.json
+
 # OS
 .DS_Store
 

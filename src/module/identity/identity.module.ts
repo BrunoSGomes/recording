@@ -1,12 +1,9 @@
-import {
-  AuthService,
-  jwtConstants
-} from '@identityModule/core/service/authentication.service'
+import { AuthService } from '@identityModule/core/service/authentication.service'
 import { IdentityPersistenceModule } from '@identityModule/persistence/identity-persistence.module'
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
-import { JwtModule } from '@nestjs/jwt'
+import { AuthModule } from '@sharedModules/auth/auth.module'
 import { BillingSubscriptionHttpClient } from '@sharedModules/integration/client/billing-subscription-http.client'
 import { BillingSubscriptionStatusApi } from '@sharedModules/integration/interface/billing-integration.interface'
 import { DomainModuleIntegrationModule } from '@sharedModules/integration/interface/domain-module-integration.module'
@@ -17,16 +14,13 @@ import { UserRepository } from './persistence/repository/user.repository'
 
 @Module({
   imports: [
-    JwtModule.register({
-      secret: jwtConstants.secret,
-      signOptions: { expiresIn: '60m' }
-    }),
     IdentityPersistenceModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       autoSchemaFile: true,
       driver: ApolloDriver
     }),
-    DomainModuleIntegrationModule
+    DomainModuleIntegrationModule,
+    AuthModule
   ],
   providers: [
     {

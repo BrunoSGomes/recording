@@ -6,43 +6,9 @@ import {
   IsDateString,
   IsEnum,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
-  IsString,
   IsUUID
 } from 'class-validator'
-
-class PlanResponseDto {
-  @IsString()
-  @Expose()
-  @IsNotEmpty()
-  readonly name: string
-
-  @IsString()
-  @Expose()
-  @IsNotEmpty()
-  readonly description?: string
-
-  @IsNumber()
-  @Expose()
-  @IsNotEmpty()
-  readonly amount: number
-
-  @IsString()
-  @Expose()
-  @IsNotEmpty()
-  readonly currency: string
-
-  @IsString()
-  @Expose()
-  @IsNotEmpty()
-  readonly interval: string
-
-  @IsNumber()
-  @Expose()
-  @IsOptional()
-  readonly trialPeriod: number | null
-}
 
 export class SubscriptionResponseDto extends DefaultResponseDto {
   @IsUUID(4)

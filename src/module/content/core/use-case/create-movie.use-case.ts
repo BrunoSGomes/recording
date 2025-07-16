@@ -1,7 +1,7 @@
 import { MovieContentModel } from '@contentModule/core/model/movie-content.model'
 import { AgeRecommendationService } from '@contentModule/core/service/age-recommendation.service'
 import { VideoProcessorService } from '@contentModule/core/service/video-processor.service'
-import { ExternalMovieClient } from '@contentModule/http/rest/client/external-movie-rating/external-movie-rating.client'
+import { ExternalMovieClient } from '@contentModule/http/client/external-movie-rating/external-movie-rating.client'
 import { Movie } from '@contentModule/persistence/entity/movie.entity'
 import { Thumbnail } from '@contentModule/persistence/entity/thumbnail.entity'
 import { Video } from '@contentModule/persistence/entity/video.entity'

@@ -1,7 +1,7 @@
 import { dataSourceOptionsFactory } from '@billingModule/persistence/typeorm-datasource.factory'
-import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
 import { ConfigModule } from '@sharedModules/config/config.module'
+import { ConfigService } from '@sharedModules/config/service/config.service'
 
 import { DataSource } from 'typeorm'
 

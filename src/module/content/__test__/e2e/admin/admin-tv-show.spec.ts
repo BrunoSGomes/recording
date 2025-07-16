@@ -1,6 +1,6 @@
-import { CONTENT_TEST_FIXTURES } from '@contentModule/__test__/constants'
 import { contentFactory } from '@contentModule/__test__/factory/content.factory'
 import { tvShowFactory } from '@contentModule/__test__/factory/tv-show.factory'
+import { CONTENT_TEST_FIXTURES } from '@contentModule/__test__/test.constant'
 import { ContentModule } from '@contentModule/content.module'
 import { HttpStatus, INestApplication } from '@nestjs/common'
 import { TestingModule } from '@nestjs/testing'

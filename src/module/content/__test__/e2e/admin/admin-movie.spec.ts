@@ -1,7 +1,7 @@
 import { HttpStatus, INestApplication } from '@nestjs/common'
 import { TestingModule } from '@nestjs/testing'
 
-import { CONTENT_TEST_FIXTURES } from '@contentModule/__test__/constants'
+import { CONTENT_TEST_FIXTURES } from '@contentModule/__test__/test.constant'
 import { ContentModule } from '@contentModule/content.module'
 import { Tables } from '@testInfra/enum/table.enum'
 import { testDbClient } from '@testInfra/knex.database'
@@ -200,7 +200,7 @@ describe('VideoUploadController (e2e)', () => {
         })
     })
 
-    it.skip('does not allow non mp4 files', async () => {
+    it('does not allow non mp4 files', async () => {
       const video = {
         title: 'Test Video',
         description: 'This is a test video',
