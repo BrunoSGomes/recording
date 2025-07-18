@@ -8,6 +8,7 @@ import { Video } from '@contentModule/persistence/entity/video.entity'
 import { ContentRepository } from '@contentModule/persistence/repository/content.repository'
 import { EpisodeRepository } from '@contentModule/persistence/repository/episode.repository'
 import { Injectable, NotFoundException } from '@nestjs/common'
+import { AppLogger } from '@sharedModules/logger/service/app-logger.service'
 import { runInTransaction } from 'typeorm-transactional'
 
 @Injectable()
@@ -18,7 +19,8 @@ export class CreateTvShowEpisodeUseCase {
     private readonly episodeLifecycleService: EpisodeLifecycleService,
     private readonly videoProcessorService: VideoProcessorService,
     private readonly episodeRepository: EpisodeRepository,
-    private readonly contentDistributionService: ContentDistributionService
+    private readonly contentDistributionService: ContentDistributionService,
+    private readonly logger: AppLogger
   ) {}
 
   async execute(
@@ -71,6 +73,13 @@ export class CreateTvShowEpisodeUseCase {
         const savedEpisode = await this.episodeRepository.save(episode)
         //If it fails the transaction is rolled back
         await this.contentDistributionService.distributeContent(content.id)
+        this.logger.log(
+          `Episode ${savedEpisode.title} with id ${savedEpisode.id} created`,
+          {
+            content,
+            savedEpisode
+          }
+        )
         return savedEpisode
       },
       {

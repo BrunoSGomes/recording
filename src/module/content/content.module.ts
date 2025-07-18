@@ -22,13 +22,15 @@ import { Module } from '@nestjs/common'
 import { AuthModule } from '@sharedModules/auth/auth.module'
 import { ConfigModule } from '@sharedModules/config/config.module'
 import { HttpClientModule } from '@sharedModules/http-client/http-client.module'
+import { LoggerModule } from '@sharedModules/logger/logger.module'
 
 @Module({
   imports: [
     ContentPersistenceModule,
     ConfigModule.forRoot(),
     HttpClientModule,
-    AuthModule
+    AuthModule,
+    LoggerModule
   ],
   controllers: [
     AdminMovieController,
