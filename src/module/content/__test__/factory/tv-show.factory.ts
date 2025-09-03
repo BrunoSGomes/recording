@@ -1,4 +1,4 @@
-import { TvShow } from '@contentModule/persistence/entity/tv-show.entity'
+import { TvShow } from '@contentModule/shared/persistence/entity/tv-show.entity'
 import { faker } from '@faker-js/faker'
 
 import * as Factory from 'factory.ts'

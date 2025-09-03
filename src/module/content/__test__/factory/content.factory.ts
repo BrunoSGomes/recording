@@ -1,5 +1,5 @@
-import { ContentType } from '@contentModule/core/enum/content-type.enum'
-import { Content } from '@contentModule/persistence/entity/content.entity'
+import { ContentType } from '@contentModule/shared/core/enum/content-type.enum'
+import { Content } from '@contentModule/shared/persistence/entity/content.entity'
 import { faker } from '@faker-js/faker'
 
 import * as Factory from 'factory.ts'
